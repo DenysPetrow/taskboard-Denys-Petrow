@@ -1,16 +1,20 @@
 # TaskBoard
 
-<!-- To jest szkielet README. W zadaniu TB-1 uzupełnij każdą sekcję i usuń te komentarze. -->
-
-Krótki opis aplikacji (2–3 zdania): czym jest TaskBoard i co można w nim zrobić.
+TaskBoard to prosty menedżer zadań. Wpisujesz zadanie, a aplikacja je zapamiętuje i trzyma na liście, dopóki go nie usuniesz. Zadania możesz dzielić na kategorie, dzięki czemu łatwo uporządkujesz je według tematów, np. praca, dom czy nauka.
 
 ## Technologie
 
-<!-- Wypisz technologie użyte w projekcie (frontend, backend, baza danych, narzędzia). -->
+- **Frontend:** HTML, CSS, JavaScript
+- **Backend:** Node.js, Express.js
+- **Baza danych:** MySQL
+- **Narzędzia:** Node.js (npm) 
 
 ## Wymagane środowisko
 
-<!-- Narzędzia i ich wersje potrzebne do uruchomienia projektu. -->
+- **Node.js** w wersji 22 LTS lub nowszej
+- **npm** w wersji 10 lub nowszej (instaluje się razem z Node.js)
+- **Baza SQL** (MySQL) uruchomiona lokalnie
+- **Przeglądarka** z obsługą nowoczesnego JavaScriptu (Chrome, Firefox, Edge lub Safari w aktualnej wersji)
 
 ## Uruchomienie
 
@@ -31,4 +35,4 @@ Pliki potrzebne podczas praktyk są w folderze [materialy](materialy/README.md).
 
 ## Autor
 
-Imię i nazwisko, klasa.
+Denys Petrow
