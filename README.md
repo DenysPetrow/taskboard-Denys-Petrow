@@ -6,15 +6,16 @@ TaskBoard to prosty menedżer zadań. Wpisujesz zadanie, a aplikacja je zapamię
 
 - **Frontend:** HTML, CSS, JavaScript
 - **Backend:** Node.js, Express.js
-- **Baza danych:** SQL(MySql)
-- **Narzędzia:** npm
+- **Baza danych:** MySQL
+- **Narzędzia:** Node.js (npm) 
 
 ## Wymagane środowisko
 
 - **Node.js** w wersji 22 LTS lub nowszej
 - **npm** w wersji 10 lub nowszej (instaluje się razem z Node.js)
-- **Baza SQL** (np. SQLite, MySQL lub PostgreSQL) uruchomiona lokalnie
+- **Baza SQL** (MySQL) uruchomiona lokalnie
 - **Przeglądarka** z obsługą nowoczesnego JavaScriptu (Chrome, Firefox, Edge lub Safari w aktualnej wersji)
+
 ## Uruchomienie
 
 <!-- Instrukcja krok po kroku. Na razie szkic – rozbudujesz ją w kolejnych tygodniach. -->
@@ -34,4 +35,8 @@ Pliki potrzebne podczas praktyk są w folderze [materialy](materialy/README.md).
 
 ## Autor
 
-Denys Petrow, 3tp
+Denys Petrow, 3tp.
+
+
+
+
