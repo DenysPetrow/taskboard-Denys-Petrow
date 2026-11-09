@@ -9,4 +9,7 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
 
+// Podłączenie nowego pliku routes/boards.js:
+app.use('/api/boards', require('./routes/boards'));
+
 app.listen(3000, () => console.log('Serwer: http://localhost:3000'));
