@@ -35,4 +35,8 @@ Pliki potrzebne podczas praktyk są w folderze [materialy](materialy/README.md).
 
 ## Autor
 
-Denys Petrow
+Denys Petrow, 3tp.
+
+
+
+
