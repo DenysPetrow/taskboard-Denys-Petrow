@@ -45,3 +45,6 @@ erDiagram
 ```
 
 **Soft delete:** usunięcie ustawia naraz `isDeleted = 1`, `deletedAt` i `deletedById`; aplikacja pokazuje tylko rekordy z `isDeleted = 0`.
+
+
+

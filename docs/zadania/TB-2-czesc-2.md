@@ -28,3 +28,7 @@
 - [ ] Usunięte zadanie znika z listy, ale zostaje w bazie z `isDeleted = 1`.
 - [ ] `GET /api/users` nie zwraca `passwordHash`.
 - [ ] Pull request z branchu `feature/tb-2-api` jest scalony do piątku 18:00.
+
+
+
+

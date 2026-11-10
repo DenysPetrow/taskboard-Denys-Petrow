@@ -17,3 +17,6 @@
 - [ ] Na branchu `feature/tb-1-start` są co najmniej 3 commity z opisem.
 - [ ] Pull request ma zielony workflow.
 - [ ] Pull request jest scalony przez merge commit, a branch nie został usunięty.
+
+
+
