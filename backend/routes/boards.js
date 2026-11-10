@@ -69,4 +69,25 @@ router.delete('/:id', async (req, res, next) => {
   }
 });
 
+// 5. Zadania tablicy bez usuniętych (GET /api/boards/:boardId/tasks)
+router.get('/:boardId/tasks', async (req, res, next) => {
+  try {
+    const [boards] = await pool.query(
+      'SELECT id FROM boards WHERE id = ? AND isDeleted = 0',
+      [req.params.boardId]
+    );
+    if (boards.length === 0) {
+      return res.status(404).json({ error: 'Nie znaleziono tablicy' });
+    }
+    const [rows] = await pool.query(
+      `SELECT id, title, description, status, priority, deadline, boardId, assigneeId, createdAt
+       FROM tasks WHERE boardId = ? AND isDeleted = 0`,
+      [req.params.boardId]
+    );
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
