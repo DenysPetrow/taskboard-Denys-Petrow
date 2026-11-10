@@ -3,6 +3,7 @@
 ## 1. Opis encji (danych)
 
 ### Użytkownik (users)
+
 Przechowuje dane potrzebne do identyfikacji i autoryzacji osób korzystających z aplikacji. Hasło ze względów bezpieczeństwa musi być przechowywane w formie zaszyfrowanej (hasz).
 
 | Informacja | Przykład |
@@ -13,6 +14,7 @@ Przechowuje dane potrzebne do identyfikacji i autoryzacji osób korzystających 
 | Hasło (zahaszowane) | $2a$12$R9h/cIPz96n.. |
 
 ### Tablica (boards)
+
 Reprezentuje przestrzeń roboczą (projekt), w ramach której tworzone są zadania. Każda tablica ma swojego właściciela.
 
 | Informacja | Przykład |
@@ -23,6 +25,7 @@ Reprezentuje przestrzeń roboczą (projekt), w ramach której tworzone są zadan
 | ID Właściciela | 1 |
 
 ### Zadanie (tasks)
+
 Reprezentuje konkretną pozycję do wykonania na tablicy. Zawiera informacje o stanie, priorytecie oraz opcjonalnym terminie i osobie przypisanej. Usunięcie zadania w demo nie usuwa go fizycznie z bazy, lecz oznacza flagą jako usunięte logicznie (soft delete).
 
 | Informacja | Przykład |
@@ -40,6 +43,7 @@ Reprezentuje konkretną pozycję do wykonania na tablicy. Zawiera informacje o s
 ---
 
 ## 2. Powiązania między danymi
+
 Jeden użytkownik może utworzyć wiele niezależnych tablic, stając się ich właścicielem, natomiast każda tablica musi mieć przypisanego dokładnie jednego właściciela. Każda tablica z kolei zawiera w sobie wiele zadań, ale jedno konkretne zadanie może należeć tylko i wyłącznie do jednej wybranej tablicy. Dodatkowo, zadanie może (ale nie musi) mieć przypisanego jednego użytkownika, który jest odpowiedzialny za jego realizację, podczas gdy jeden użytkownik może mieć przypisanych wiele zadań na raz.
 
 ---
