@@ -24,3 +24,7 @@
 - [ ] Powiązania są opisane w co najmniej 3 zdaniach i jest przykład zadania w JSON.
 - [ ] Jest wstępny diagram ERD z co najmniej trzema tabelami, kluczami głównymi i obcymi.
 - [ ] Pull request z branchu `feature/tb-1-dane` jest scalony do piątku 18:00.
+
+
+
+

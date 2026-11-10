@@ -17,3 +17,7 @@ Pliki, z których korzystasz podczas praktyk. Nie zmieniaj ich – kopiuj do swo
 3. Sklonuj swoje repozytorium: `git clone <adres>` i otwórz folder w VS Code.
 4. Ustaw ochronę gałęzi `main` i scalanie przez merge commit (instrukcja w prezentacji z poniedziałku 1).
 5. Utwórz branch `feature/tb-1-start` i zacznij zadanie TB-1.
+
+
+
+
