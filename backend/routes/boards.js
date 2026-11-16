@@ -22,7 +22,7 @@ router.post('/', async (req, res, next) => {
     if (name.length < 1 || name.length > 80) {
       return res.status(400).json({ error: 'Nazwa musi mieć od 1 do 80 znaków' });
     }
-    const ownerId = 1;
+    const ownerId = req.session.userId;
     const [result] = await pool.query(
       'INSERT INTO boards (name, description, ownerId) VALUES (?, ?, ?)',
       [name, req.body.description || null, ownerId]
@@ -57,8 +57,8 @@ router.put('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     const [result] = await pool.query(
-      'UPDATE boards SET isDeleted = 1, deletedAt = NOW() WHERE id = ? AND isDeleted = 0',
-      [req.params.id]
+      'UPDATE boards SET isDeleted = 1, deletedAt = NOW(), deletedById = ? WHERE id = ? AND isDeleted = 0',
+      [req.session.userId, req.params.id]
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Nie znaleziono tablicy' });
