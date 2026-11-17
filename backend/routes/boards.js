@@ -7,7 +7,11 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
   try {
     const [rows] = await pool.query(
-      'SELECT id, name, description, ownerId, createdAt FROM boards WHERE isDeleted = 0'
+      `SELECT b.id, b.name, b.description, b.ownerId, b.createdAt,
+              CONCAT(u.firstName, ' ', u.lastName) AS ownerName,
+              (SELECT COUNT(*) FROM tasks t WHERE t.boardId = b.id AND t.isDeleted = 0) AS activeTasks
+       FROM boards b JOIN users u ON u.id = b.ownerId
+       WHERE b.isDeleted = 0 ORDER BY b.id`
     );
     res.json(rows);
   } catch (err) {
@@ -79,11 +83,31 @@ router.get('/:boardId/tasks', async (req, res, next) => {
     if (boards.length === 0) {
       return res.status(404).json({ error: 'Nie znaleziono tablicy' });
     }
-    const [rows] = await pool.query(
-      `SELECT id, title, description, status, priority, deadline, boardId, assigneeId, createdAt
-       FROM tasks WHERE boardId = ? AND isDeleted = 0`,
-      [req.params.boardId]
-    );
+    let sql = `SELECT id, title, description, status, priority, deadline, boardId, assigneeId, createdAt
+       FROM tasks WHERE boardId = ? AND isDeleted = 0`;
+    const params = [req.params.boardId];
+    const { priority } = req.query;
+    if (priority) {
+      if (!['low', 'medium', 'high'].includes(priority)) {
+        return res.status(400).json({ error: 'Nieprawidłowy priorytet' });
+      }
+      sql += ' AND priority = ?';
+      params.push(priority);
+    }
+    const { assigneeId, q } = req.query;
+    if (assigneeId) {
+      if (!/^\d+$/.test(assigneeId)) {
+        return res.status(400).json({ error: 'Nieprawidłowa osoba' });
+      }
+      sql += ' AND assigneeId = ?';
+      params.push(assigneeId);
+    }
+    if (q) {
+      sql += ' AND title LIKE ?';
+      params.push('%' + String(q).trim() + '%');
+    }
+    sql += ' ORDER BY deadline IS NULL, deadline, id';
+    const [rows] = await pool.query(sql, params);
     res.json(rows);
   } catch (err) {
     next(err);

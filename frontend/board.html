@@ -1,14 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<title>TaskBoard – tablica</title>
 </head>
 <body>
-    <header>
-        <h2>TaskBoard</h2>
-        
-    </header>
+<nav class="navbar navbar-dark tb-nav">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand fw-bold" href="boards.html">TaskBoard</a>
+    <div class="d-flex align-items-center gap-2">
+      <span class="nav-user">Zalogowano: <strong id="userName"></strong></span>
+      <button id="logoutBtn" type="button" class="btn btn-outline-light btn-sm">Wyloguj</button>
+    </div>
+  </div>
+</nav>
+<main class="container-fluid px-3 py-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+      <li class="breadcrumb-item"><a href="boards.html">Tablice</a></li>
+      <li class="breadcrumb-item active" aria-current="page" id="crumb"></li>
+    </ol>
+  </nav>
+  <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="page-title h2 mb-1" id="boardTitle"></h1>
+      <p class="text-secondary mb-0" id="boardDesc"></p>
+    </div>
+    <button id="newTaskBtn" type="button" class="btn btn-primary align-self-start">Dodaj zadanie</button>
+  </div>
+  <div id="message"></div>
+  <form class="row g-2 align-items-end mb-3" id="filters">
+    <div class="col-12 col-md-6 col-lg-3">
+      <label class="form-label small mb-1" for="filterPriority">Priorytet</label>
+      <select class="form-select" id="filterPriority">
+        <option value="">Wszystkie</option><option value="low">Niski</option><option value="medium">Średni</option><option value="high">Wysoki</option>
+      </select>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <label class="form-label small mb-1" for="filterAssignee">Osoba</label>
+      <select class="form-select" id="filterAssignee"><option value="">Wszyscy</option></select>
+    </div>
+    <div class="col-12 col-lg-4">
+      <label class="form-label small mb-1" for="filterQ">Szukaj w tytułach</label>
+      <input class="form-control" id="filterQ" type="search" placeholder="np. README">
+    </div>
+    <div class="col-12 col-lg-2">
+      <button type="button" class="btn btn-outline-secondary w-100" id="clearFilters">Wyczyść filtry</button>
+    </div>
+  </form>
+  <div class="row g-3">
+    <section class="col-12 col-lg-4"><div class="column column-todo"><h2 class="h6 column-head">Do zrobienia <span class="badge col-count" id="count-todo">0</span></h2><div class="d-grid gap-2" id="col-todo"></div></div></section>
+    <section class="col-12 col-lg-4"><div class="column column-in_progress"><h2 class="h6 column-head">W trakcie <span class="badge col-count" id="count-in_progress">0</span></h2><div class="d-grid gap-2" id="col-in_progress"></div></div></section>
+    <section class="col-12 col-lg-4"><div class="column column-done"><h2 class="h6 column-head">Gotowe <span class="badge col-count" id="count-done">0</span></h2><div class="d-grid gap-2" id="col-done"></div></div></section>
+  </div>
+</main>
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="taskForm" novalidate>
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="taskModalTitle">Nowe zadanie</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label" for="taskTitle">Tytuł</label>
+          <input class="form-control" id="taskTitle" maxlength="100">
+          <div class="invalid-feedback">Tytuł musi mieć od 3 do 100 znaków</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="taskDesc">Opis (opcjonalnie)</label>
+          <textarea class="form-control" id="taskDesc" rows="3"></textarea>
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label" for="taskStatus">Status</label>
+            <select class="form-select" id="taskStatus"><option value="todo">Do zrobienia</option><option value="in_progress">W trakcie</option><option value="done">Gotowe</option></select>
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label" for="taskPriority">Priorytet</label>
+            <select class="form-select" id="taskPriority"><option value="low">Niski</option><option value="medium" selected>Średni</option><option value="high">Wysoki</option></select>
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label" for="taskDeadline">Termin (opcjonalnie)</label>
+            <input class="form-control" id="taskDeadline" type="date">
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label" for="taskAssignee">Osoba (opcjonalnie)</label>
+            <select class="form-select" id="taskAssignee"><option value="">Nieprzypisane</option></select>
+          </div>
+        </div>
+        <div class="small text-secondary" id="taskInfo"></div>
+        <div class="text-danger small" id="taskFormError"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Anuluj</button>
+        <button type="submit" class="btn btn-primary">Zapisz zadanie</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/board.js"></script>
 </body>
 </html>
