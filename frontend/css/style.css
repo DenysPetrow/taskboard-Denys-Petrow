@@ -1,0 +1,26 @@
+body { background: #f4f5f7; color: #14202b; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: #0e7770; }
+.tb-nav { background: #111d29; }
+.nav-user { color: #8a97a6; font-size: .9rem; }
+.nav-user strong { color: #fff; font-weight: 400; }
+.brand { font-weight: 700; color: #14202b; }
+.page-title { font-weight: 400; }
+.auth-box { max-width: 480px; }
+.btn-primary { --bs-btn-color: #fff; --bs-btn-hover-color: #fff; --bs-btn-bg: #0e7770; --bs-btn-border-color: #0e7770; --bs-btn-hover-bg: #0a5f5a; --bs-btn-hover-border-color: #0a5f5a; --bs-btn-active-bg: #0a5f5a; --bs-btn-active-border-color: #0a5f5a; }
+.btn-outline-primary { --bs-btn-color: #0e7770; --bs-btn-border-color: #0e7770; --bs-btn-hover-bg: #0e7770; --bs-btn-hover-border-color: #0e7770; --bs-btn-active-bg: #0a5f5a; --bs-btn-active-border-color: #0a5f5a; }
+.nav-tabs .nav-link { color: #0e7770; }
+.nav-tabs .nav-link.active { color: #14202b; }
+.board-card { border-top: 4px solid #0e7770; }
+.board-card h2 { font-weight: 400; }
+.column { border-radius: 12px; padding: 12px; height: 100%; }
+.column-todo { background: #e8eef6; }
+.column-in_progress { background: #fff2db; }
+.column-done { background: #e3f2e7; }
+.column-head { display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: .6rem; }
+.col-count { background: #fff; color: #14202b; font-size: .7rem; }
+.task-low { border-left: 4px solid #8b98a8; }
+.task-medium { border-left: 4px solid #c47f17; }
+.task-high { border-left: 4px solid #b42318; }
+.prio-low { background: #e2e6ea; color: #3d4752; }
+.prio-medium { background: #fdeeb4; color: #6b4e00; }
+.prio-high { background: #fbd5d8; color: #8c1d18; }
