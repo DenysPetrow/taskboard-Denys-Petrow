@@ -7,7 +7,7 @@ const { requireAuth } = require('./middleware/auth');
 const app = express();
 app.use(express.json());
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'dev-secret-zmien-w-pliku-env',
   resave: false,
   saveUninitialized: false
 }));
