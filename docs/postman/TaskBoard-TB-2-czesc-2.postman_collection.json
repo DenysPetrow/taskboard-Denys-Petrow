@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
-    "name": "TaskBoard - TB-2 część 2",
-    "description": "Kolekcja do testowania API zadań i użytkowników (TB-2, część 2), z przypadkami 400 i 404. Uruchamiaj w kolejności (Collection Runner): zadanie z POST 201 jest używane przez GET, PUT i DELETE.",
+    "name": "TaskBoard - API (TB-2 i TB-3)",
+    "description": "Kolekcja do testowania API TaskBoard. Uruchom cały folder po kolei (Collection Runner): zaczyna od wylogowania i logowania, potem tablice, zadania i wylogowanie.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -13,9 +13,252 @@
     {
       "key": "taskId",
       "value": ""
+    },
+    {
+      "key": "boardId",
+      "value": ""
     }
   ],
   "item": [
+    {
+      "name": "Autoryzacja",
+      "item": [
+        {
+          "name": "POST Wylogowanie (czyszczenie sesji) (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Kasuje sesję, żeby kolejny test zaczynał bez logowania."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Lista tablic bez logowania (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards"
+              ]
+            },
+            "description": "Bez sesji API zwraca 401."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Logowanie błędnym hasłem (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"anna.nowak\",\n  \"password\": \"zle\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Logowanie poprawne (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Brak passwordHash', function () { pm.expect(pm.response.json()).to.not.have.property('passwordHash'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Po tym żądaniu Postman przechowuje ciasteczko sesji dla pozostałych żądań.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"anna.nowak\",\n  \"password\": \"Test1234!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Rejestracja na zajęty login (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"anna.nowak\",\n  \"firstName\": \"Anna\",\n  \"lastName\": \"Nowak\",\n  \"password\": \"Test1234!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Kto jest zalogowany (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "Użytkownicy",
       "item": [
@@ -46,7 +289,290 @@
                 "users"
               ]
             },
-            "description": "Zwraca id, login, firstName, lastName. Pole passwordHash nie może się pojawić."
+            "description": "Bez pola passwordHash."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tablice",
+      "item": [
+        {
+          "name": "GET Lista tablic (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "POST Nowa tablica (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('boardId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards"
+              ]
+            },
+            "description": "Zapisuje id w zmiennej boardId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tablica testowa\",\n  \"description\": \"Utworzona z Postmana\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Nowa tablica z pustą nazwą (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"  \"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Zmiana tablicy (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards/{{boardId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards",
+                "{{boardId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tablica po zmianie\",\n  \"description\": \"Nowy opis\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Zmiana nieistniejącej tablicy (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards/9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards",
+                "9999"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Widmo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Usunięcie tablicy (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards/{{boardId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards",
+                "{{boardId}}"
+              ]
+            },
+            "description": "Soft delete."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Usunięcie tablicy ponownie (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards/{{boardId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards",
+                "{{boardId}}"
+              ]
+            },
+            "description": ""
           },
           "response": []
         }
@@ -63,8 +589,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Kod odpowiedzi 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Brak usuniętych zadań', function () { pm.response.json().forEach(function (t) { pm.expect(t.id).to.not.be.oneOf([9, 10]); }); });"
+                  "pm.test('Kod odpowiedzi 200', function () { pm.response.to.have.status(200); });"
                 ]
               }
             }
@@ -84,12 +609,89 @@
                 "tasks"
               ]
             },
-            "description": "Aktywne zadania istniejącej tablicy."
+            "description": ""
           },
           "response": []
         },
         {
-          "name": "GET Zadania tablicy (404 brak tablicy)",
+          "name": "GET Zadania tablicy z filtrem priorytetu (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards/1/tasks?priority=high",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards",
+                "1",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "priority",
+                  "value": "high"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "GET Zadania tablicy z błędnym filtrem (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/boards/1/tasks?priority=pilne",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "boards",
+                "1",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "priority",
+                  "value": "pilne"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "GET Zadania nieistniejącej tablicy (404)",
           "event": [
             {
               "listen": "test",
@@ -117,7 +719,7 @@
                 "tasks"
               ]
             },
-            "description": "Tablica nie istnieje albo jest usunięta."
+            "description": ""
           },
           "response": []
         },
@@ -130,7 +732,6 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Kod odpowiedzi 201', function () { pm.response.to.have.status(201); });",
-                  "pm.test('Odpowiedź zawiera id', function () { pm.expect(pm.response.json()).to.have.property('id'); });",
                   "pm.collectionVariables.set('taskId', pm.response.json().id);"
                 ]
               }
@@ -155,7 +756,7 @@
                 "tasks"
               ]
             },
-            "description": "Poprawne zadanie. Test zapisuje id w zmiennej kolekcji taskId, której używają kolejne żądania.",
+            "description": "Zapisuje id w zmiennej taskId.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Przykładowe zadanie backendu\",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"todo\",\n  \"priority\": \"medium\",\n  \"deadline\": \"2026-12-31\",\n  \"boardId\": 1,\n  \"assigneeId\": null\n}",
@@ -169,7 +770,7 @@
           "response": []
         },
         {
-          "name": "POST Nowe zadanie (400 pusty tytuł)",
+          "name": "POST Nowe zadanie, pusty tytuł (400)",
           "event": [
             {
               "listen": "test",
@@ -201,7 +802,7 @@
                 "tasks"
               ]
             },
-            "description": "Tytuł po obcięciu spacji ma 0 znaków.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"  \",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"todo\",\n  \"priority\": \"medium\",\n  \"deadline\": \"2026-12-31\",\n  \"boardId\": 1,\n  \"assigneeId\": null\n}",
@@ -215,7 +816,7 @@
           "response": []
         },
         {
-          "name": "POST Nowe zadanie (400 za krótki tytuł)",
+          "name": "POST Nowe zadanie, za krótki tytuł (400)",
           "event": [
             {
               "listen": "test",
@@ -247,7 +848,7 @@
                 "tasks"
               ]
             },
-            "description": "Tytuł krótszy niż 3 znaki.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"ab\",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"todo\",\n  \"priority\": \"medium\",\n  \"deadline\": \"2026-12-31\",\n  \"boardId\": 1,\n  \"assigneeId\": null\n}",
@@ -261,7 +862,7 @@
           "response": []
         },
         {
-          "name": "POST Nowe zadanie (400 zły status)",
+          "name": "POST Nowe zadanie, zły status (400)",
           "event": [
             {
               "listen": "test",
@@ -293,7 +894,7 @@
                 "tasks"
               ]
             },
-            "description": "Status spoza listy todo / in_progress / done.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Przykładowe zadanie backendu\",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"nieprawidlowy\",\n  \"priority\": \"medium\",\n  \"deadline\": \"2026-12-31\",\n  \"boardId\": 1,\n  \"assigneeId\": null\n}",
@@ -307,7 +908,7 @@
           "response": []
         },
         {
-          "name": "POST Nowe zadanie (400 zły priorytet)",
+          "name": "POST Nowe zadanie, zły priorytet (400)",
           "event": [
             {
               "listen": "test",
@@ -339,7 +940,7 @@
                 "tasks"
               ]
             },
-            "description": "Priorytet spoza listy low / medium / high.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Przykładowe zadanie backendu\",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"todo\",\n  \"priority\": \"extreme\",\n  \"deadline\": \"2026-12-31\",\n  \"boardId\": 1,\n  \"assigneeId\": null\n}",
@@ -353,7 +954,7 @@
           "response": []
         },
         {
-          "name": "POST Nowe zadanie (400 zła data)",
+          "name": "POST Nowe zadanie, zła data (400)",
           "event": [
             {
               "listen": "test",
@@ -385,7 +986,7 @@
                 "tasks"
               ]
             },
-            "description": "Termin w formacie innym niż RRRR-MM-DD.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Przykładowe zadanie backendu\",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"todo\",\n  \"priority\": \"medium\",\n  \"deadline\": \"31-12-2026\",\n  \"boardId\": 1,\n  \"assigneeId\": null\n}",
@@ -399,7 +1000,7 @@
           "response": []
         },
         {
-          "name": "POST Nowe zadanie (400 nieistniejąca tablica)",
+          "name": "POST Nowe zadanie, nieistniejąca tablica (400)",
           "event": [
             {
               "listen": "test",
@@ -431,7 +1032,7 @@
                 "tasks"
               ]
             },
-            "description": "Tablica o takim id nie istnieje.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Przykładowe zadanie backendu\",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"todo\",\n  \"priority\": \"medium\",\n  \"deadline\": \"2026-12-31\",\n  \"boardId\": 9999,\n  \"assigneeId\": null\n}",
@@ -445,7 +1046,7 @@
           "response": []
         },
         {
-          "name": "POST Nowe zadanie (400 nieistniejąca osoba)",
+          "name": "POST Nowe zadanie, nieistniejąca osoba (400)",
           "event": [
             {
               "listen": "test",
@@ -477,7 +1078,7 @@
                 "tasks"
               ]
             },
-            "description": "Użytkownik o takim id nie istnieje.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Przykładowe zadanie backendu\",\n  \"description\": \"Opis testowego zadania\",\n  \"status\": \"todo\",\n  \"priority\": \"medium\",\n  \"deadline\": \"2026-12-31\",\n  \"boardId\": 1,\n  \"assigneeId\": 9999\n}",
@@ -517,12 +1118,12 @@
                 "{{taskId}}"
               ]
             },
-            "description": "Zadanie utworzone wcześniej żądaniem POST (201)."
+            "description": ""
           },
           "response": []
         },
         {
-          "name": "GET Szczegóły zadania (404 brak zadania)",
+          "name": "GET Szczegóły nieistniejącego zadania (404)",
           "event": [
             {
               "listen": "test",
@@ -549,7 +1150,7 @@
                 "9999"
               ]
             },
-            "description": "Zadanie nie istnieje."
+            "description": ""
           },
           "response": []
         },
@@ -586,7 +1187,7 @@
                 "{{taskId}}"
               ]
             },
-            "description": "Zmiana wszystkich pól zadania, w tym statusu.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Zaktualizowany tytuł zadania\",\n  \"description\": \"Nowy opis\",\n  \"status\": \"in_progress\",\n  \"priority\": \"high\",\n  \"deadline\": \"2026-11-20\",\n  \"assigneeId\": 1\n}",
@@ -600,7 +1201,7 @@
           "response": []
         },
         {
-          "name": "PUT Zmiana zadania (400 zły status)",
+          "name": "PUT Zmiana zadania, zły status (400)",
           "event": [
             {
               "listen": "test",
@@ -633,7 +1234,7 @@
                 "{{taskId}}"
               ]
             },
-            "description": "PUT waliduje pola tak samo jak POST.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Zaktualizowany tytuł zadania\",\n  \"status\": \"zrobione\",\n  \"priority\": \"high\"\n}",
@@ -647,7 +1248,7 @@
           "response": []
         },
         {
-          "name": "PUT Zmiana zadania (404 brak zadania)",
+          "name": "PUT Zmiana nieistniejącego zadania (404)",
           "event": [
             {
               "listen": "test",
@@ -680,7 +1281,7 @@
                 "9999"
               ]
             },
-            "description": "Poprawne dane, ale zadanie nie istnieje.",
+            "description": "",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Aktualizacja widmo\",\n  \"status\": \"todo\",\n  \"priority\": \"low\"\n}",
@@ -694,7 +1295,7 @@
           "response": []
         },
         {
-          "name": "DELETE Usunięcie zadania (204 soft delete)",
+          "name": "DELETE Usunięcie zadania (204)",
           "event": [
             {
               "listen": "test",
@@ -720,7 +1321,7 @@
                 "{{taskId}}"
               ]
             },
-            "description": "Ustawia isDeleted = 1 i deletedAt. Rekord zostaje w bazie."
+            "description": "Soft delete: isDeleted = 1, deletedById z sesji."
           },
           "response": []
         },
@@ -752,12 +1353,12 @@
                 "{{taskId}}"
               ]
             },
-            "description": "Usunięte zadanie nie jest już zwracane przez API."
+            "description": ""
           },
           "response": []
         },
         {
-          "name": "DELETE Usunięcie zadania (404 brak zadania)",
+          "name": "DELETE Usunięcie nieistniejącego zadania (404)",
           "event": [
             {
               "listen": "test",
@@ -784,7 +1385,75 @@
                 "9999"
               ]
             },
-            "description": "Zadanie nie istnieje."
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Wylogowanie",
+      "item": [
+        {
+          "name": "POST Wylogowanie (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "GET Kto jest zalogowany po wylogowaniu (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Kod odpowiedzi 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Odpowiedź zawiera pole error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
           },
           "response": []
         }
